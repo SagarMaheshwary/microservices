@@ -1,0 +1,12 @@
+# Ignore microservices repos
+microservices-api-gateway/
+microservices-authentication-service/
+microservices-user-service/
+microservices-video-service/
+
+# Ignore docker volumes data
+docker/microservices-redis/data/*
+!docker/microservices-redis/data/.gitkeep
+
+docker/microservices-user-db/data/*
+!docker/microservices-user-db/data/.gitkeep

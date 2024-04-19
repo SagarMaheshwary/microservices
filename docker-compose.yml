@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  # MICROSERVICES
+  microservices-api-gateway:
+    build: ./microservices-api-gateway
+    container_name: microservices-api-gateway
+    ports:
+      - 4000:4000
+    depends_on:
+      - microservices-user-service
+      - microservices-authentication-service
+    volumes:
+      - ./microservices-api-gateway:/app
+
+  microservices-authentication-service:
+    build: ./microservices-authentication-service
+    container_name: microservices-authentication-service
+    ports:
+      - 5001:5001
+    depends_on:
+      - microservices-user-service
+      - microservices-redis
+    volumes:
+      - ./microservices-authentication-service:/app
+
+  microservices-user-service:
+    build: ./microservices-user-service
+    container_name: microservices-user-service
+    ports:
+      - 5000:5000
+    depends_on:
+      - microservices-user-db
+    volumes:
+      - ./microservices-user-service:/app
+      - /app/node_modules
+
+  # DATABASES
+  microservices-user-db:
+    image: postgres:14
+    container_name: microservices-user-db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=microservices_user_service
+    volumes:
+      - ./docker/microservices-user-db/data:/var/lib/postgresql/data
+      - ./docker/microservices-user-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
+
+  # CACHES
+  microservices-redis:
+    image: redis:7.2
+    container_name: microservices-redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/microservices-redis/data:/data
+      - ./docker/microservices-redis/config/redis.conf:/usr/local/etc/redis/redis.conf
