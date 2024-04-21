@@ -4,6 +4,14 @@ clone:
 	git clone https://github.com/SagarMaheshwary/microservices-authentication-service
 	git clone https://github.com/SagarMaheshwary/microservices-user-service
 
+copy-local-env:
+	@echo "----------------- CREATING ENV FILE FOR EACH MICROSERVICE -----------------"
+	cp ./microservices-api-gateway/.env.example ./microservices-api-gateway/.env
+	cp ./microservices-authentication-service/.env.example ./microservices-authentication-service/.env
+	cp ./microservices-user-service/.env.example ./microservices-user-service/.env
+
+copy-docker-env:
+	@echo "----------------- CREATING ENV FILE FOR EACH MICROSERVICE -----------------"
 	cp ./microservices-api-gateway/.env.docker-example ./microservices-api-gateway/.env
 	cp ./microservices-authentication-service/.env.docker-example ./microservices-authentication-service/.env
 	cp ./microservices-user-service/.env.docker-example ./microservices-user-service/.env
