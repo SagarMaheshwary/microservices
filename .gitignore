@@ -2,11 +2,19 @@
 microservices-api-gateway/
 microservices-authentication-service/
 microservices-user-service/
-microservices-video-service/
+microservices-upload-service/
+microservices-encode-service/
+microservices-video-catalog-service/
 
 # Ignore docker volumes data
 docker/microservices-redis/data/*
 !docker/microservices-redis/data/.gitkeep
 
+docker/microservices-rabbitmq/data/*
+!docker/microservices-rabbitmq/data/.gitkeep
+
 docker/microservices-user-db/data/*
 !docker/microservices-user-db/data/.gitkeep
+
+docker/microservices-video-catalog-db/data/*
+!docker/microservices-video-catalog-db/data/.gitkeep

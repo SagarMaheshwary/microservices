@@ -8,6 +8,9 @@ A streaming platform developed using Microservices architecture. (currently in d
 - NodeJS (v20)
 - PostgreSQL (v14)
 - Redis (v7.2)
+- RabbitMQ (3.12)
+- Amazon S3
+- FFMPEG
 
 ### FEATURES
 
@@ -15,6 +18,9 @@ A streaming platform developed using Microservices architecture. (currently in d
 - [x] API Gateway
 - [x] Authentication Service
 - [x] User Service
+- [x] Upload Service
+- [x] Encode Service
+- [ ] Video Catalog Service
 - [ ] Video Streaming Service
 - [ ] Tests
 - [ ] CI/CD (Github Actions)
@@ -84,7 +90,7 @@ Every service is mounted with a **volume** which means any changes to the code w
 Start all Docker containers:
 
 ```bash
-make up
+make compose-up
 ```
 
 Alternative:
@@ -98,7 +104,7 @@ Access the microservices at **localhost:3000**.
 To run containers in the background:
 
 ```bash
-make up-detached
+make compose-up-detached
 ```
 
 Alternative:
@@ -110,7 +116,7 @@ docker compose up -d
 To stop the containers:
 
 ```bash
-make down
+make compose-down
 ```
 
 Alternative:

@@ -1,4 +1,6 @@
 version: "3"
+# Project name (used as prefix for containers and images)
+name: "microservices"
 
 services:
   # MICROSERVICES
@@ -10,19 +12,10 @@ services:
     depends_on:
       - microservices-user-service
       - microservices-authentication-service
+      - microservices-upload-service
+      - microservices-video-catalog-service
     volumes:
       - ./microservices-api-gateway:/app
-
-  microservices-authentication-service:
-    build: ./microservices-authentication-service
-    container_name: microservices-authentication-service
-    ports:
-      - 5001:5001
-    depends_on:
-      - microservices-user-service
-      - microservices-redis
-    volumes:
-      - ./microservices-authentication-service:/app
 
   microservices-user-service:
     build: ./microservices-user-service
@@ -35,25 +28,91 @@ services:
       - ./microservices-user-service:/app
       - /app/node_modules
 
+  microservices-authentication-service:
+    build: ./microservices-authentication-service
+    container_name: microservices-authentication-service
+    ports:
+      - 5001:5001
+    depends_on:
+      - microservices-user-service
+      - microservices-redis
+    volumes:
+      - ./microservices-authentication-service:/app
+
+  microservices-upload-service:
+    build: ./microservices-upload-service
+    container_name: microservices-upload-service
+    ports:
+      - 5002:5002
+    depends_on:
+      - microservices-rabbitmq
+    volumes:
+      - ./microservices-upload-service:/app
+
+  microservices-encode-service:
+    build: ./microservices-encode-service
+    container_name: microservices-encode-service
+    depends_on:
+      - microservices-rabbitmq
+    volumes:
+      - ./microservices-encode-service:/app
+
+  microservices-video-catalog-service:
+    build: ./microservices-video-catalog-service
+    container_name: microservices-video-catalog-service
+    ports:
+      - 5003:5003
+    depends_on:
+      - microservices-rabbitmq
+      - microservices-video-catalog-db
+    volumes:
+      - ./microservices-video-catalog-service:/app
+
   # DATABASES
   microservices-user-db:
     image: postgres:14
     container_name: microservices-user-db
-    ports:
-      - 5432:5432
+    # ports:
+    #   - 5432:5432
     environment:
-      - POSTGRES_PASSWORD=password
       - POSTGRES_DB=microservices_user_service
+      - POSTGRES_PASSWORD=password
     volumes:
       - ./docker/microservices-user-db/data:/var/lib/postgresql/data
       - ./docker/microservices-user-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
+
+  microservices-video-catalog-db:
+    image: postgres:14
+    container_name: microservices-video-catalog-db
+    # ports:
+    #   - 5433:5432
+    environment:
+      - POSTGRES_DB=microservices_video_catalog_service
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./docker/microservices-video-catalog-db/data:/var/lib/postgresql/data
+      - ./docker/microservices-video-catalog-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
 
   # CACHES
   microservices-redis:
     image: redis:7.2
     container_name: microservices-redis
-    ports:
-      - 6379:6379
+    # ports:
+    #   - 6379:6379
     volumes:
       - ./docker/microservices-redis/data:/data
       - ./docker/microservices-redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+
+  # MESSAGE BROKERS
+  microservices-rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: microservices-rabbitmq
+    ports:
+      #   - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=default
+      - RABBITMQ_DEFAULT_PASS=default
+    volumes:
+      - ./docker/microservices-rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./docker/microservices-rabbitmq/data:/var/lib/rabbitmq/mnesia
