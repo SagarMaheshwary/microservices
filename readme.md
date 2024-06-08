@@ -64,6 +64,12 @@ Start all Docker containers:
 make compose-up
 ```
 
+After all the containers are up and running, you need to run migrations and scripts to create the database tables for the required services. To do this, open a new terminal and execute the following command:
+
+```bash
+make migrate
+```
+
 Access the microservices at **localhost:3000**. Each service is mounted with a **volume**. This means any changes to the code are automatically synced to the container, eliminating the need to restart containers manually.
 
 To run containers in the background:

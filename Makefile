@@ -37,6 +37,11 @@ compose-up:
 	@echo "----------------- STARTING DOCKER CONTAINERS -----------------"
 	docker compose up
 
+migrate:
+	@echo "----------------- RUNNING MIGRATIONS -----------------"
+	docker exec microservices-user-service npm run migration:run
+	docker exec microservices-video-catalog-db psql -U postgres -d microservices_video_catalog_service -a -f /docker-entrypoint-initdb.d/database.sql
+
 compose-up-detached:
 	@echo "----------------- STARTING DOCKER CONTAINERS IN DETACHED MODE -----------------"
 	docker compose up -d

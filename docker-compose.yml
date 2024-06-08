@@ -92,6 +92,7 @@ services:
     volumes:
       - ./docker/microservices-video-catalog-db/data:/var/lib/postgresql/data
       - ./docker/microservices-video-catalog-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./microservices-video-catalog-service/database.sql:/docker-entrypoint-initdb.d/database.sql
 
   # CACHES
   microservices-redis:
