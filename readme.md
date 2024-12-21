@@ -20,7 +20,7 @@ A streaming platform developed using Microservices architecture. (currently in d
 - [x] User Service
 - [x] Upload Service
 - [x] Encode Service
-- [ ] Video Catalog Service
+- [x] Video Catalog Service
 - [ ] Video Streaming Service
 - [ ] CI/CD (Github Actions)
 - [ ] Architecture Diagrams

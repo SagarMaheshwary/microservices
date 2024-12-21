@@ -7,14 +7,17 @@ microservices-encode-service/
 microservices-video-catalog-service/
 
 # Ignore docker volumes data
-docker/microservices-redis/data/*
-!docker/microservices-redis/data/.gitkeep
+docker/redis/data/*
+!docker/redis/data/.gitkeep
 
-docker/microservices-rabbitmq/data/*
-!docker/microservices-rabbitmq/data/.gitkeep
+docker/rabbitmq/data/*
+!docker/rabbitmq/data/.gitkeep
 
-docker/microservices-user-db/data/*
-!docker/microservices-user-db/data/.gitkeep
+docker/user-db/data/*
+!docker/user-db/data/.gitkeep
 
-docker/microservices-video-catalog-db/data/*
-!docker/microservices-video-catalog-db/data/.gitkeep
+docker/video-catalog-db/data/*
+!docker/video-catalog-db/data/.gitkeep
+
+docker/pgadmin/data/*
+!docker/pgadmin/data/.gitkeep

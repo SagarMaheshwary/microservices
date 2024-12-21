@@ -1,119 +1,158 @@
-version: "3"
 # Project name (used as prefix for containers and images)
 name: "microservices"
 
 services:
   # MICROSERVICES
-  microservices-api-gateway:
-    build: ./microservices-api-gateway
-    container_name: microservices-api-gateway
+  api-gateway:
+    build:
+      context: ./microservices-api-gateway
+      target: development
+      args:
+        - MODE=development
+    container_name: api-gateway
     ports:
       - 4000:4000
     depends_on:
-      - microservices-user-service
-      - microservices-authentication-service
-      - microservices-upload-service
-      - microservices-video-catalog-service
+      - user-service
+      - authentication-service
+      - upload-service
+      - video-catalog-service
+    restart: always
     volumes:
       - ./microservices-api-gateway:/app
 
-  microservices-user-service:
-    build: ./microservices-user-service
-    container_name: microservices-user-service
+  user-service:
+    build:
+      context: ./microservices-user-service
+      target: development
+    container_name: user-service
     ports:
       - 5000:5000
     depends_on:
-      - microservices-user-db
+      - user-db
+    restart: always
     volumes:
       - ./microservices-user-service:/app
       - /app/node_modules
 
-  microservices-authentication-service:
-    build: ./microservices-authentication-service
-    container_name: microservices-authentication-service
+  authentication-service:
+    build:
+      context: ./microservices-authentication-service
+      target: development
+      args:
+        - MODE=development
+    container_name: authentication-service
     ports:
       - 5001:5001
     depends_on:
-      - microservices-user-service
-      - microservices-redis
+      - user-service
+      - redis
+    restart: always
     volumes:
       - ./microservices-authentication-service:/app
 
-  microservices-upload-service:
-    build: ./microservices-upload-service
-    container_name: microservices-upload-service
+  upload-service:
+    build:
+      context: ./microservices-upload-service
+      target: development
+      args:
+        - MODE=development
+    container_name: upload-service
     ports:
       - 5002:5002
     depends_on:
-      - microservices-rabbitmq
+      - rabbitmq
+    restart: always
     volumes:
       - ./microservices-upload-service:/app
 
-  microservices-encode-service:
-    build: ./microservices-encode-service
-    container_name: microservices-encode-service
+  encode-service:
+    build:
+      context: ./microservices-encode-service
+      target: development
+      args:
+        - MODE=development
+    container_name: encode-service
     depends_on:
-      - microservices-rabbitmq
+      - rabbitmq
+    restart: always
     volumes:
       - ./microservices-encode-service:/app
 
-  microservices-video-catalog-service:
-    build: ./microservices-video-catalog-service
-    container_name: microservices-video-catalog-service
+  video-catalog-service:
+    build:
+      context: ./microservices-video-catalog-service
+      target: development
+      args:
+        - MODE=development
+    container_name: video-catalog-service
     ports:
       - 5003:5003
     depends_on:
-      - microservices-rabbitmq
-      - microservices-video-catalog-db
+      - rabbitmq
+      - video-catalog-db
+    restart: always
     volumes:
       - ./microservices-video-catalog-service:/app
 
   # DATABASES
-  microservices-user-db:
+  user-db:
     image: postgres:14
-    container_name: microservices-user-db
+    container_name: user-db
     # ports:
     #   - 5432:5432
     environment:
       - POSTGRES_DB=microservices_user_service
       - POSTGRES_PASSWORD=password
     volumes:
-      - ./docker/microservices-user-db/data:/var/lib/postgresql/data
-      - ./docker/microservices-user-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./docker/user-db/data:/var/lib/postgresql/data
+      - ./docker/user-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
 
-  microservices-video-catalog-db:
+  video-catalog-db:
     image: postgres:14
-    container_name: microservices-video-catalog-db
+    container_name: video-catalog-db
     # ports:
     #   - 5433:5432
     environment:
       - POSTGRES_DB=microservices_video_catalog_service
       - POSTGRES_PASSWORD=password
     volumes:
-      - ./docker/microservices-video-catalog-db/data:/var/lib/postgresql/data
-      - ./docker/microservices-video-catalog-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./docker/video-catalog-db/data:/var/lib/postgresql/data
+      - ./docker/video-catalog-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
       - ./microservices-video-catalog-service/database.sql:/docker-entrypoint-initdb.d/database.sql
 
+  pgadmin:
+    image: dpage/pgadmin4:8.13.0
+    container_name: pgadmin
+    ports:
+      - 8080:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    volumes:
+      - ./docker/pgadmin/data:/var/lib/pgadmin
+    attach: false
+
   # CACHES
-  microservices-redis:
+  redis:
     image: redis:7.2
-    container_name: microservices-redis
+    container_name: redis
     # ports:
     #   - 6379:6379
     volumes:
-      - ./docker/microservices-redis/data:/data
-      - ./docker/microservices-redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./docker/redis/data:/data
+      - ./docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
 
   # MESSAGE BROKERS
-  microservices-rabbitmq:
+  rabbitmq:
     image: rabbitmq:3.12-management
-    container_name: microservices-rabbitmq
+    container_name: rabbitmq
     ports:
-      #   - 5672:5672
+      # - 5672:5672
       - 15672:15672
     environment:
       - RABBITMQ_DEFAULT_USER=default
       - RABBITMQ_DEFAULT_PASS=default
     volumes:
-      - ./docker/microservices-rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - ./docker/microservices-rabbitmq/data:/var/lib/rabbitmq/mnesia
+      - ./docker/rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./docker/rabbitmq/data:/var/lib/rabbitmq/mnesia
