@@ -27,11 +27,12 @@ copy-docker-env:
 
 compose-build:
 	@echo "----------------- BUILDING DOCKER CONTAINER IMAGES -----------------"
+	docker compose pull
 	docker compose build
 
 compose-rebuild:
 	@echo "----------------- REBUILDING DOCKER IMAGES -----------------"
-	docker compose up --build --force-recreate
+	docker compose build --no-cache
 
 compose-up:
 	@echo "----------------- STARTING DOCKER CONTAINERS -----------------"
@@ -51,11 +52,12 @@ compose-down:
 	docker compose down
 
 list-images:
-	@echo "----------------- IMAGES LIST -----------------"
-	@docker images --filter=reference="microservices*"
+	@echo "----------------- IMAGES LIST (ONLY MICROSERVICES) -----------------"
+	docker images --filter=reference="microservices*"
 
 delete-images:
 	@echo "----------------- DELETING ALL IMAGES/BUILD CACHE -----------------"
-	@docker rmi $$(docker images --filter=reference="microservices*" -q) -f
-	@docker builder prune -f
-	@docker image prune -f
+	docker rmi $$(docker images --filter=reference="microservices*" -q) -f
+	docker rmi postgres:14 redis:7.2 rabbitmq:3.12-management dpage/pgadmin4:8.13.0 grafana/grafana-enterprise:11.3.0 prom/prometheus:v2.55.0 grafana/loki:2.7.0 kbudde/rabbitmq-exporter:1.0.0 prometheuscommunity/postgres-exporter:v0.16.0 oliver006/redis_exporter:v1.67.0 -f
+	docker builder prune -f
+	docker image prune -f

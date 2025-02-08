@@ -5,6 +5,7 @@ microservices-user-service/
 microservices-upload-service/
 microservices-encode-service/
 microservices-video-catalog-service/
+microservices-frontend/
 
 # Ignore docker volumes data
 docker/redis/data/*
@@ -21,3 +22,12 @@ docker/video-catalog-db/data/*
 
 docker/pgadmin/data/*
 !docker/pgadmin/data/.gitkeep
+
+docker/grafana/data/*
+!docker/grafana/data/.gitkeep
+
+docker/prometheus/data/*
+!docker/prometheus/data/.gitkeep
+
+docker/loki/data/*
+!docker/loki/data/.gitkeep

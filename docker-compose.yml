@@ -27,7 +27,8 @@ services:
       target: development
     container_name: user-service
     ports:
-      - 5000:5000
+      - 5000:5000 # gRPC
+      - 5010:5010 # HTTP (prometheus)
     depends_on:
       - user-db
     restart: always
@@ -43,7 +44,8 @@ services:
         - MODE=development
     container_name: authentication-service
     ports:
-      - 5001:5001
+      - 5001:5001 # gRPC
+      - 5011:5011 # HTTP (prometheus)
     depends_on:
       - user-service
       - redis
@@ -59,7 +61,8 @@ services:
         - MODE=development
     container_name: upload-service
     ports:
-      - 5002:5002
+      - 5002:5002 # gRPC
+      - 5012:5012 # HTTP (prometheus)
     depends_on:
       - rabbitmq
     restart: always
@@ -73,6 +76,9 @@ services:
       args:
         - MODE=development
     container_name: encode-service
+    ports:
+      - 5004:5004 # gRPC
+      - 5014:5014 # HTTP (prometheus)
     depends_on:
       - rabbitmq
     restart: always
@@ -87,7 +93,8 @@ services:
         - MODE=development
     container_name: video-catalog-service
     ports:
-      - 5003:5003
+      - 5003:5003 # gRPC
+      - 5013:5013 # HTTP (prometheus)
     depends_on:
       - rabbitmq
       - video-catalog-db
@@ -156,3 +163,83 @@ services:
     volumes:
       - ./docker/rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./docker/rabbitmq/data:/var/lib/rabbitmq/mnesia
+
+  # MONITORING
+  grafana:
+    image: grafana/grafana-enterprise:11.3.0
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./docker/grafana/data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+    attach: false
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    container_name: prometheus
+    # ports:
+    #   - 9090:9090
+    volumes:
+      - ./docker/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./docker/prometheus/data:/prometheus
+    attach: false
+
+  loki:
+    image: grafana/loki:2.7.0
+    container_name: loki
+    # ports:
+    #   - 3100:3100
+    volumes:
+      - ./docker/loki/data:/loki
+    attach: false
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter:1.0.0
+    container_name: rabbitmq-exporter
+    # ports:
+    #   - "9419:9419"
+    environment:
+      - RABBIT_URL=http://rabbitmq:15672
+      - RABBIT_USER=default
+      - RABBIT_PASSWORD=default
+    depends_on:
+      - rabbitmq
+    attach: false
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.67.0
+    container_name: redis-exporter
+    # ports:
+    #   - 9121:9121
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+    depends_on:
+      - redis
+    attach: false
+
+  user-db-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.16.0
+    container_name: user-db-exporter
+    # ports:
+    #   - 9187:9187
+    environment:
+      - DATA_SOURCE_URI=user-db:5432/microservices_user_service?sslmode=disable
+      - DATA_SOURCE_USER=postgres
+      - DATA_SOURCE_PASS=password
+    depends_on:
+      - user-db
+    attach: false
+
+  video-catalog-db-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.16.0
+    container_name: video-catalog-db-exporter
+    # ports:
+    #   - 9187:9187
+    environment:
+      - DATA_SOURCE_URI=video-catalog-db:5432/microservices_video_catalog_service?sslmode=disable
+      - DATA_SOURCE_USER=postgres
+      - DATA_SOURCE_PASS=password
+    depends_on:
+      - video-catalog-db
+    attach: false

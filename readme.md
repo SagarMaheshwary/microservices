@@ -1,31 +1,83 @@
 # STREAMING PLATFORM - MICROSERVICES
 
-A streaming platform developed using Microservices architecture. (currently in development)
+A Streaming platform based on Microservices architecture.
+
+![Microservices Architecture](./assets/microservices-architecture.png)
 
 ### TECHNOLOGIES
 
-- Golang (v1.22)
-- NodeJS (v20)
-- PostgreSQL (v14)
-- Redis (v7.2)
-- RabbitMQ (3.12)
-- Amazon S3
-- FFMPEG
+- **Languages:** Golang, NodeJS (NestJS)
+- **Databases:** PostgreSQL, Redis
+- **Message Broker:** RabbitMQ
+- **Cloud:** AWS S3, CloudFront
+- **Monitoring & Logging:** Grafana, Prometheus, Loki
 
-### FEATURES
+### **Microservices Overview**
 
-- [x] Docker/Docker Compose
-- [x] API Gateway
-- [x] Authentication Service
-- [x] User Service
-- [x] Upload Service
-- [x] Encode Service
-- [x] Video Catalog Service
-- [ ] Video Streaming Service
-- [ ] CI/CD (Github Actions)
-- [ ] Architecture Diagrams
+1. **API Gateway:**
 
-### SETUP
+   - Acts as the main entry point for external requests.
+   - Uses REST API to communicate with clients.
+   - Routes internal service-to-service communication via gRPC.
+
+2. **User Service:**
+
+   - Manages user-related operations (e.g., profile management, settings).
+   - Stores user data in PostgreSQL.
+   - Uses gRPC for request/response communication.
+
+3. **Authentication Service:**
+
+   - Handles user registration, login, and authentication.
+   - Uses JWT for authentication.
+   - Maintains a JWT token blacklist in Redis.
+   - Communicates with the User Service for user validation.
+
+4. **Upload Service:**
+
+   - Accepts raw video uploads from users.
+   - Stores raw videos in an S3 bucket.
+   - Sends metadata and processing instructions via RabbitMQ to the Encode Service.
+
+5. **Encode Service:**
+
+   - Listens for RabbitMQ messages from the Upload Service.
+   - Processes video files into MPEG-DASH chunks.
+   - Generates DASH manifest files.
+   - Uploads processed video chunks and manifest files to S3.
+   - Sends metadata and video details to the Video Catalog Service via RabbitMQ.
+
+6. **Video Catalog Service:**
+
+   - Receives metadata from the Encode Service after video processing.
+   - Stores video metadata (e.g., resolutions, duration, S3 paths) in PostgreSQL.
+   - Implements gRPC RPCs for:
+     - Listing available videos.
+     - Fetching details of a single video.
+     - Generating CloudFront CDN URLs for streaming.
+
+### **Storage and Streaming**
+
+- **S3 + CloudFront:**
+  - Raw and processed video content is stored in an S3 bucket.
+  - CloudFront CDN is used to distribute video chunks efficiently.
+  - Signed URLs are generated for secure streaming access.
+
+### **Monitoring and Logging**
+
+- **Metrics & Observability:**
+
+  - Prometheus collects default and custom metrics from all microservices, PostgreSQL databases, Redis, and RabbitMQ.
+  - Metrics are visualized in Grafana dashboards.
+
+- **Logging:**
+
+  - Loki is used for centralized logging.
+  - Logs from microservices are exported to Loki and analyzed in Grafana.
+
+---
+
+### Setup
 
 Once you've cloned the repository, you can use **Docker** and **Docker Compose** (note: this is not the same as [docker-compose](https://stackoverflow.com/a/66526176)) to set up and run all the services locally. Additionally, a **Makefile** is included with commands to streamline the setup process. If you don't have **make** installed on your system, you can simply run the bash commands defined in each Makefile command (be sure to remove the **@** at the start of any command, if present).
 
