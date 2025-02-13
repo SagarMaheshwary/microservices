@@ -6,7 +6,7 @@ MICROSERVICES= \
     encode-service \
     video-catalog-service
 
-.PHONY: help clone copy-env-files docker-compose-build docker-compose-up  docker-compose-detached docker-compose-down docker-delete-images
+.PHONY: help clone copy-env-files docker-compose-build docker-compose-up  docker-compose-detached docker-compose-down docker-delete-images docker-db-migrate
 
 # Utility for colored output
 define PRINT_COLOR
@@ -63,3 +63,8 @@ docker-delete-images:
 		oliver006/redis_exporter:v1.67.0
 	docker builder prune -f
 	docker image prune -f
+
+docker-db-migrate:
+	@echo "$(call PRINT_COLOR, Running migrations for user service and video catalog service)"
+	docker exec microservices-user-service npm run migration:run
+	docker exec microservices-video-catalog-db psql -U postgres -d microservices_video_catalog_service -a -f /docker-entrypoint-initdb.d/database.sql

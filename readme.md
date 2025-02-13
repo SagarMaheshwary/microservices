@@ -110,19 +110,19 @@ Update the **env** variables for these services:
 Download and build all required Docker images:
 
 ```bash
-make compose-build
+make docker-compose-build
 ```
 
 Start all Docker containers:
 
 ```bash
-make compose-up
+make docker-compose-up
 ```
 
 After all the containers are up and running, you need to run migrations and scripts to create the database tables for the required services. To do this, open a new terminal and execute the following command:
 
 ```bash
-make db-migrate
+make docker-db-migrate
 ```
 
 Access the microservices API Gateway at **localhost:4000**. Each service is mounted with a **volume**. This means any changes to the code are automatically synced to the container, eliminating the need to restart containers manually.
@@ -130,19 +130,19 @@ Access the microservices API Gateway at **localhost:4000**. Each service is moun
 To run containers in the background:
 
 ```bash
-make compose-up-detached
+make docker-compose-up-detached
 ```
 
 To stop and remove the containers:
 
 ```bash
-make compose-down
+make docker-compose-down
 ```
 
 Delete the container images:
 
 ```bash
-make delete-images
+make docker-delete-images
 ```
 
 ### APIs
