@@ -79,7 +79,15 @@ A Streaming platform based on Microservices architecture.
 
 ### Setup
 
-Once you've cloned the repository, you can use **Docker** and **Docker Compose** (note: this is not the same as [docker-compose](https://stackoverflow.com/a/66526176)) to set up and run all the services locally. Additionally, a **Makefile** is included with commands to streamline the setup process. If you don't have **make** installed on your system, you can simply run the bash commands defined in each Makefile command (be sure to remove the **@** at the start of any command, if present).
+Once you've cloned the repository, you can use **Docker** and **Docker Compose** to set up and run all the services locally. Additionally, a Makefile is included with commands to streamline the setup process.
+
+Make sure you have the latest version of Docker installed, as it includes docker compose. You can download it from [Docker's official website](https://docs.docker.com/engine/install/).
+
+If you don't have **make** installed on your system, you can install it using:
+
+- **Ubuntu/Debian:** `sudo apt install make`
+- **MacOS (Homebrew):** `brew install make`
+- **Windows (via Chocolatey):** `choco install make`
 
 Clone all microservices:
 
@@ -87,27 +95,22 @@ Clone all microservices:
 make clone
 ```
 
-Create **.env** file from **.env.docker-example** in each service.
+Create **.env** file from **.env.docker-example** in each service:
 
 ```bash
-make copy-docker-env
+make copy-env-files
 ```
 
 Update the **env** variables for these services:
 
-- **microservices-encode-service:** all variables starting with AWS\_
-- **microservices-upload-service:** all variables starting with AWS\_
+- **microservices-encode-service:** Add your AWS S3 credentials
+- **microservices-upload-service:** Add your AWS S3 credentials
+- **microservices-video-catalog-service:** Add your AWS S3 credentials and Cloudfront URL
 
 Download and build all required Docker images:
 
 ```bash
 make compose-build
-```
-
-You can also use the below command to rebuild images after making changes to any microservice like installing or removing a dependency.
-
-```bash
-make compose-rebuild
 ```
 
 Start all Docker containers:
@@ -119,10 +122,10 @@ make compose-up
 After all the containers are up and running, you need to run migrations and scripts to create the database tables for the required services. To do this, open a new terminal and execute the following command:
 
 ```bash
-make migrate
+make db-migrate
 ```
 
-Access the microservices at **localhost:3000**. Each service is mounted with a **volume**. This means any changes to the code are automatically synced to the container, eliminating the need to restart containers manually.
+Access the microservices API Gateway at **localhost:4000**. Each service is mounted with a **volume**. This means any changes to the code are automatically synced to the container, eliminating the need to restart containers manually.
 
 To run containers in the background:
 
@@ -130,7 +133,7 @@ To run containers in the background:
 make compose-up-detached
 ```
 
-To remove the containers:
+To stop and remove the containers:
 
 ```bash
 make compose-down
@@ -144,4 +147,4 @@ make delete-images
 
 ### APIs
 
-Checkout the [**microservices-api-gateway**](https://github.com/SagarMaheshwary/microservices-api-gateway) repo for available apis listing, examples, and Postman collection.
+Checkout the [**microservices-api-gateway**](https://github.com/SagarMaheshwary/microservices-api-gateway) repo for available apis listing, and Postman collection.
