@@ -65,6 +65,5 @@ docker-delete-images:
 	docker image prune -f
 
 docker-db-migrate:
-	@echo "$(call PRINT_COLOR, Running migrations for user service and video catalog service)"
+	@echo "$(call PRINT_COLOR, Running migrations for user service)"
 	docker exec microservices-user-service npm run migration:run
-	docker exec microservices-video-catalog-db psql -U postgres -d microservices_video_catalog_service -a -f /docker-entrypoint-initdb.d/database.sql
