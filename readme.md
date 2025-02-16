@@ -4,6 +4,17 @@ A Streaming platform based on Microservices architecture.
 
 ![Microservices Architecture](./assets/microservices-architecture.png)
 
+### Table of Contents
+
+- [Technologies](#technologies)
+- [Microservices Overview](#microservices-overview)
+- [Storage and Streaming](#storage-and-streaming)
+- [Monitoring and Logging](#monitoring-and-logging)
+- [Setup - Docker Compose](#setup---docker-compose)
+- [Grafana Dashboards](#grafana-dashboards)
+- [Setup - Kubernetes](#setup---kubernetes)
+- [APIs](#apis)
+
 ### TECHNOLOGIES
 
 - **Languages:** Golang, NodeJS (NestJS)
@@ -12,7 +23,7 @@ A Streaming platform based on Microservices architecture.
 - **Cloud:** AWS S3, CloudFront
 - **Monitoring & Logging:** Grafana, Prometheus, Loki
 
-### **Microservices Overview**
+### **MICROSERVICES OVERVIEW**
 
 1. **API Gateway:**
 
@@ -56,14 +67,14 @@ A Streaming platform based on Microservices architecture.
      - Fetching details of a single video.
      - Generating CloudFront CDN URLs for streaming.
 
-### **Storage and Streaming**
+### **STORAGE AND STREAMING**
 
 - **S3 + CloudFront:**
   - Raw and processed video content is stored in an S3 bucket.
   - CloudFront CDN is used to distribute video chunks efficiently.
   - Signed URLs are generated for secure streaming access.
 
-### **Monitoring and Logging**
+### **MONITORING AND LOGGING**
 
 - **Metrics & Observability:**
 
@@ -77,7 +88,7 @@ A Streaming platform based on Microservices architecture.
 
 ---
 
-### Setup
+### SETUP - DOCKER COMPOSE
 
 Once you've cloned the repository, you can use **Docker** and **Docker Compose** to set up and run all the services locally. Additionally, a Makefile is included with commands to streamline the setup process.
 
@@ -145,11 +156,16 @@ Delete the container images:
 make docker-delete-images
 ```
 
-#### Grafana Dashboards
+### GRAFANA DASHBOARDS
+
+Note: currently only available with docker compose setup.
 
 Access Grafana: Open **http://localhost:3000** in your browser.
 
-Login Credentials: Default username: admin, password: admin (change this after logging in).
+Login Credentials:
+
+- **Default username:** admin,
+- **Default password:** admin (can setup a new password on first login).
 
 ##### Available Dashboards:
 
@@ -164,6 +180,74 @@ PostgreSQL Overview (Query performance, Connections, etc.)
 Redis Overview (Memory usage, request rates, etc.)
 
 ![Grafana Dashboard Redis](./assets/grafana-dashboard-redis.png)
+
+### SETUP - KUBERNETES
+
+Once you've cloned the repository, you can use **Kind** and **Kubernetes** to set up and run all the services locally. A **Makefile** is included with commands to simplify the setup process, including cluster creation, image building, and service deployment.
+
+Ensure you have the following tools installed:
+
+- [Docker](https://docs.docker.com/engine/install)
+- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- [kubectx](https://github.com/ahmetb/kubectx?tab=readme-ov-file#installation)
+- [cloud-provider-kind](https://github.com/kubernetes-sigs/cloud-provider-kind?tab=readme-ov-file#install)
+
+If **make** is not installed on your system, install it using:
+
+- **Ubuntu/Debian:** `sudo apt install make`
+- **MacOS (Homebrew):** `brew install make`
+- **Windows (via Chocolatey):** `choco install make`
+
+Create the Kind Cluster:
+
+```bash
+make kind-create-cluster
+```
+
+This creates the Kubernetes cluster using Kind and sets up necessary components like namespaces, docker registry, and the metrics server. The metrics server is optional and can be used with **kubectl top** or [k9s](https://k9scli.io/topics/install/) to monitor resource usage of pods.
+
+Build microservices images:
+
+```bash
+make kind-build-images
+```
+
+Push all the built images to the local registry for use in Kind:
+
+```bash
+make kind-push-images
+```
+
+Deploy NGINX Ingress Controller:
+
+```bash
+make kind-deploy-nginx-ingress
+```
+
+This sets up ingress routing for external access. **cloud-provider-kind** acts like a cloud load balancer but for a local Kind cluster.
+
+Deploy Microservices and Datastores:
+
+```bash
+make kind-deploy-services
+```
+
+This applies Kubernetes manifests to deploy all microservices and required datastores. Once all pods are up and running, microservices can be accessed using the private IP obtained from the NGINX Ingress controller.
+
+To delete the cluster and clean up resources:
+
+```bash
+make kind-delete-cluster
+```
+
+This removes the Kind cluster and stops the local Docker registry.
+
+To remove only services:
+
+```bash
+make kind-delete-services
+```
 
 ### APIs
 

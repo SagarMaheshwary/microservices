@@ -81,10 +81,6 @@ docker-db-migrate: ## Run db migrates for services
 	@printf "$(call PRINT_COLOR, Running migrations for user service\n)"
 	@docker exec microservices-user-service npm run migration:run
 
-kind-push-service-image:
-	@printf "$(call PRINT_COLOR, Pushing $(SERVICE) image\n)"
-	@docker push $(DOCKER_REGISTRY)/$(notdir $(SERVICE)):$(VERSION)
-
 kind-create-cluster: ## Create Kubernetes kind cluster
 	@printf "$(call PRINT_COLOR, Creating kind cluster\n)"
 	@kind create cluster --config=./kubernetes/kind-config.yaml
@@ -134,6 +130,10 @@ kind-push-images: ## Push docker images to local registry
 	@for service in  $(MICROSERVICES); do \
 		$(MAKE) kind-push-service-image SERVICE=$$service; \
 	done
+
+kind-push-service-image:
+	@printf "$(call PRINT_COLOR, Pushing $(SERVICE) image\n)"
+	@docker push $(DOCKER_REGISTRY)/$(notdir $(SERVICE)):$(VERSION)
 
 kind-build-service-image:
 	@printf "$(call PRINT_COLOR, Building $(SERVICE) image\n)"
