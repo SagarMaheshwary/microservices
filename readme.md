@@ -227,6 +227,8 @@ make kind-deploy-nginx-ingress
 
 This sets up ingress routing for external access. **cloud-provider-kind** acts like a cloud load balancer but for a local Kind cluster.
 
+Before deploying services, ensure that the **AWS**\_\* environment variables are encoded in Base64 and added to the **Secret.yaml** files of **encode-service**, **upload-service**, and **video-catalog-service**.
+
 Deploy Microservices and Datastores:
 
 ```bash

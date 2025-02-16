@@ -15,6 +15,22 @@ spec:
       labels:
         app: user-service
     spec:
+      initContainers:
+        - name: user-service-run-migrations
+          image: kind-registry:5000/user-service:1.0
+          command:
+            [
+              "node",
+              "node_modules/.bin/typeorm",
+              "migration:run",
+              "-d",
+              "dist/config/migration.typeorm.js",
+            ]
+          envFrom:
+            - configMapRef:
+                name: user-service
+            - secretRef:
+                name: user-service
       containers:
         - name: user-service
           image: kind-registry:5000/user-service:1.0
