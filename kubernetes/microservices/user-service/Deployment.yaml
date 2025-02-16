@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: microservices
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: kind-registry:5000/user-service:1.0
+          envFrom:
+            - configMapRef:
+                name: user-service
+            - secretRef:
+                name: user-service
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+            - containerPort: 5010
+              protocol: TCP
+          livenessProbe:
+            grpc:
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          readinessProbe:
+            grpc:
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          resources:
+            requests:
+              memory: "400Mi" # NodeJS typically uses higher memory than golang
+              cpu: "200m"
+            limits:
+              memory: "400Mi"
+              cpu: "200m"

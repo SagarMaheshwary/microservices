@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentication-service
+  namespace: microservices
+data:
+  GRPC_HOST: "0.0.0.0"
+  GRPC_PORT: "5001"
+  GRPC_USER_SERVICE_URL: "user-service.microservices.svc.cluster.local:5000"
+  GRPC_CLIENT_TIMEOUT_SECONDS: "5"
+
+  JWT_EXPIRY: "36000"
+
+  REDIS_HOST: "redis.datastores.svc.cluster.local"
+  REDIS_PORT: "6379"
+
+  PROMETHEUS_METRICS_HOST: "0.0.0.0"
+  PROMETHEUS_METRICS_PORT: "5011"
+
+  # GRPC_GO_LOG_VERBOSITY_LEVEL: "99"
+  # GRPC_GO_LOG_SEVERITY_LEVEL: "info"

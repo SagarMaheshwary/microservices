@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upload-service
+  namespace: microservices
+  labels:
+    app: upload-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upload-service
+  template:
+    metadata:
+      labels:
+        app: upload-service
+    spec:
+      containers:
+        - name: upload-service
+          image: kind-registry:5000/upload-service:1.0
+          envFrom:
+            - configMapRef:
+                name: upload-service
+            - secretRef:
+                name: upload-service
+          ports:
+            - containerPort: 5002
+              protocol: TCP
+            - containerPort: 5012
+              protocol: TCP
+          livenessProbe:
+            grpc:
+              port: 5002
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          readinessProbe:
+            grpc:
+              port: 5002
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "200m"
+            limits:
+              memory: "150Mi"
+              cpu: "200m"

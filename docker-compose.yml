@@ -126,7 +126,6 @@ services:
     volumes:
       - ./docker/video-catalog-db/data:/var/lib/postgresql/data
       - ./docker/video-catalog-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
-      - ./microservices-video-catalog-service/database.sql:/docker-entrypoint-initdb.d/database.sql
 
   pgadmin:
     image: dpage/pgadmin4:8.13.0

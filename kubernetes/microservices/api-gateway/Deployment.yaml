@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: microservices
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: kind-registry:5000/api-gateway:1.0
+          envFrom:
+            - configMapRef:
+                name: api-gateway
+          ports:
+            - containerPort: 4000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "200m"
+            limits:
+              memory: "150Mi"
+              cpu: "200m"
+      volumes:
+        - name: env-volume
+          projected:
+            sources:
+              - configMap:
+                  name: api-gateway

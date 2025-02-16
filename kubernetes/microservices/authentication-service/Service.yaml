@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication-service
+  namespace: microservices
+spec:
+  type: ClusterIP
+  selector:
+    app: authentication-service
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 5001
+      targetPort: 5001
+    - name: http
+      protocol: TCP
+      port: 5011
+      targetPort: 5011

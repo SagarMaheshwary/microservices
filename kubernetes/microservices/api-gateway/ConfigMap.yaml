@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway
+  namespace: microservices
+data:
+  HTTP_HOST: "0.0.0.0"
+  HTTP_PORT: "4000"
+
+  GRPC_AUTHENTICATION_SERVICE_URL: "authentication-service.microservices.svc.cluster.local:5001"
+  GRPC_UPLOAD_SERVICE_URL: "upload-service.microservices.svc.cluster.local:5002"
+  GRPC_VIDEO_CATALOG_SERVICE_URL: "video-catalog-service.microservices.svc.cluster.local:5003"
+  GRPC_CLIENT_TIMEOUT_SECONDS: "5"

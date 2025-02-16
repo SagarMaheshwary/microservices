@@ -587,7 +587,7 @@
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "rabbitmq_up",
+              "expr": "max(rabbitmq_up)",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "__auto",

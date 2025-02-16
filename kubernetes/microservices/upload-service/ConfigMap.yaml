@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upload-service
+  namespace: microservices
+data:
+  GRPC_HOST: "0.0.0.0"
+  GRPC_PORT: "5002"
+  GRPC_ENCODE_SERVICE_URL: "encode-service.microservices.svc.cluster.local:5004"
+  GRPC_CLIENT_TIMEOUT_SECONDS: "5"
+
+  PROMETHEUS_METRICS_HOST: "0.0.0.0"
+  PROMETHEUS_METRICS_PORT: "5012"
+
+  AWS_REGION: "us-east-1"
+  AWS_S3_PRESIGNED_URL_EXPIRY: "15"
+
+  AMQP_HOST: "rabbitmq.datastores.svc.cluster.local"
+  AMQP_PORT: "5672"

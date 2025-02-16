@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: datastores
+spec:
+  serviceName: rabbitmq
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3.12-management
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: RABBITMQ_DEFAULT_USER
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: RABBITMQ_DEFAULT_PASS
+          volumeMounts:
+            - name: rabbitmq
+              mountPath: /etc/rabbitmq
+            - name: rabbitmq-data
+              mountPath: /var/lib/rabbitmq
+          lifecycle:
+            postStart:
+              exec:
+                command: [
+                    "/bin/sh",
+                    "-c",
+                    "echo 'Configuring RabbitMQ...'; \
+                    for i in $(seq 1 60); do \
+                    if rabbitmqctl status; then \
+                    rabbitmqctl wait /var/lib/rabbitmq/mnesia/rabbit@$(hostname).pid && \
+                    echo 'RabbitMQ is ready!' && break; \
+                    else \
+                    echo 'Waiting for RabbitMQ to be ready...'; \
+                    fi; \
+                    sleep 5; \
+                    done; \
+                    rabbitmqctl set_user_tags ${RABBITMQ_DEFAULT_USER} administrator && \
+                    rabbitmqctl set_permissions -p / ${RABBITMQ_DEFAULT_USER} '.*' '.*' '.*'; \
+                    echo 'RabbitMQ configured successfully.'",
+                  ]
+      volumes:
+        - name: rabbitmq
+          configMap:
+            name: rabbitmq
+  volumeClaimTemplates:
+    - metadata:
+        name: rabbitmq-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: encode-service
+  namespace: microservices
+data:
+  GRPC_HOST: "0.0.0.0"
+  GRPC_PORT: "5004"
+
+  PROMETHEUS_METRICS_HOST: "0.0.0.0"
+  PROMETHEUS_METRICS_PORT: "5014"
+
+  AMQP_HOST: "rabbitmq.datastores.svc.cluster.local"
+  AMQP_PORT: "5672"
+
+  AWS_REGION: "us-east-1"

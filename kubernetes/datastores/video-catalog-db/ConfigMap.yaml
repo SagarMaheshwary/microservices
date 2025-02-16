@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: video-catalog-db
+  namespace: datastores
+data:
+  POSTGRES_DB: microservices_video_catalog_service

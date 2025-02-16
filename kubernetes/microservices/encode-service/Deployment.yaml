@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: encode-service
+  namespace: microservices
+  labels:
+    app: encode-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: encode-service
+  template:
+    metadata:
+      labels:
+        app: encode-service
+    spec:
+      containers:
+        - name: encode-service
+          image: kind-registry:5000/encode-service:1.0
+          envFrom:
+            - configMapRef:
+                name: encode-service
+            - secretRef:
+                name: encode-service
+          ports:
+            - containerPort: 5004
+              protocol: TCP
+            - containerPort: 5014
+              protocol: TCP
+          livenessProbe:
+            grpc:
+              port: 5004
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          readinessProbe:
+            grpc:
+              port: 5004
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          resources: # Higher resources for FFmpeg video encoding
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"

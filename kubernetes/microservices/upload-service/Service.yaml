@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-service
+  namespace: microservices
+spec:
+  type: ClusterIP
+  selector:
+    app: upload-service
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 5002
+      targetPort: 5002
+    - name: http
+      protocol: TCP
+      port: 5012
+      targetPort: 5012
+

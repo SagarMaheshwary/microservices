@@ -125,7 +125,7 @@ After all the containers are up and running, you need to run migrations and scri
 make docker-db-migrate
 ```
 
-Access the microservices API Gateway at **localhost:4000**. Each service is mounted with a **volume**. This means any changes to the code are automatically synced to the container, eliminating the need to restart containers manually.
+Access the microservices API Gateway at **http://localhost:4000**. Each service is mounted with a **volume**. This means any changes to the code are automatically synced to the container, eliminating the need to restart containers manually.
 
 To run containers in the background:
 
@@ -144,6 +144,26 @@ Delete the container images:
 ```bash
 make docker-delete-images
 ```
+
+#### Grafana Dashboards
+
+Access Grafana: Open **http://localhost:3000** in your browser.
+
+Login Credentials: Default username: admin, password: admin (change this after logging in).
+
+##### Available Dashboards:
+
+Microservices Overview (Service health, Total requests, latency, errors rate etc.)
+
+![Grafana Dashboard Microservices](./assets/grafana-dashboard-microservices.png)
+
+PostgreSQL Overview (Query performance, Connections, etc.)
+
+![Grafana Dashboard PostgreSQL](./assets/grafana-dashboard-postgresql.png)
+
+Redis Overview (Memory usage, request rates, etc.)
+
+![Grafana Dashboard Redis](./assets/grafana-dashboard-redis.png)
 
 ### APIs
 

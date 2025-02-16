@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-catalog-service
+  namespace: microservices
+  labels:
+    app: video-catalog-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video-catalog-service
+  template:
+    metadata:
+      labels:
+        app: video-catalog-service
+    spec:
+      containers:
+        - name: video-catalog-service
+          image: kind-registry:5000/video-catalog-service:1.0
+          envFrom:
+            - configMapRef:
+                name: video-catalog-service
+            - secretRef:
+                name: video-catalog-service
+          ports:
+            - containerPort: 5003
+              protocol: TCP
+            - containerPort: 5013
+              protocol: TCP
+          livenessProbe:
+            grpc:
+              port: 5003
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          readinessProbe:
+            grpc:
+              port: 5003
+            initialDelaySeconds: 20
+            periodSeconds: 45
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "200m"
+            limits:
+              memory: "150Mi"
+              cpu: "200m"
