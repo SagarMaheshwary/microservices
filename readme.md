@@ -199,6 +199,12 @@ If **make** is not installed on your system, install it using:
 - **MacOS (Homebrew):** `brew install make`
 - **Windows (via Chocolatey):** `choco install make`
 
+Clone all microservices:
+
+```bash
+make clone
+```
+
 Create the Kind Cluster:
 
 ```bash
