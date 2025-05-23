@@ -112,7 +112,7 @@ kind-deploy-metrics-server: ## Install metrics api so we can see resource usage 
 
 kind-delete-cluster: ## Delete Kubernetes kind cluster
 	@printf "$(call PRINT_COLOR, Deleting kind cluster\n)"
-	@kind delete cluster
+	@kind delete cluster || true
 	@docker stop kind-registry
 
 kind-create-namespace: ## Create Kubernetes namespaces
