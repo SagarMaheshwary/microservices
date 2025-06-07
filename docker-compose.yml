@@ -193,6 +193,14 @@ services:
       - ./docker/loki/data:/loki
     attach: false
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.56
+    ports:
+      - "16686:16686" # UI
+      # - "4318:4318" # OTLP HTTP
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
   rabbitmq-exporter:
     image: kbudde/rabbitmq-exporter:1.0.0
     container_name: rabbitmq-exporter
