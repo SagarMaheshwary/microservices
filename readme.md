@@ -156,30 +156,64 @@ Delete the container images:
 make docker-delete-images
 ```
 
-### GRAFANA DASHBOARDS
+#### GRAFANA DASHBOARDS
 
-Note: currently only available with docker compose setup.
-
-Access Grafana: Open **http://localhost:3000** in your browser.
-
+Access Grafana: Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 Login Credentials:
 
-- **Default username:** admin,
-- **Default password:** admin (can setup a new password on first login).
+- **Default username:** `admin`
+- **Default password:** `admin` (you can set a new password on first login)
 
-##### Available Dashboards:
+This project includes comprehensive observability using **Prometheus** for metrics, **Loki** for centralized logging, and **Grafana** to visualize and explore both. Monitoring allows you to track real-time system behavior and identify bottlenecks, failures, or unusual patterns.
 
-Microservices Overview (Service health, Total requests, latency, errors rate etc.)
+#### Available Dashboards
+
+##### **Microservices Overview**
+
+Displays high-level metrics from all microservices collected via Prometheus. Includes:
+
+- Service health status
+- Request count and rates
+- Latency (avg, p95)
+- Error rates (4xx, 5xx)
 
 ![Grafana Dashboard Microservices](./assets/grafana-dashboard-microservices.png)
 
-PostgreSQL Overview (Query performance, Connections, etc.)
+##### **Microservices Logs**
+
+View real-time and historical logs from all microservices, aggregated using **Loki** (via Alloy agent).
+
+![Grafana Dashboard Microservices Logs](./assets/grafana-dashboard-microservices-logs.png)
+
+##### **PostgreSQL Overview**
+
+Visualizes internal PostgreSQL metrics (via `postgres_exporter`):
+
+- Query throughput and durations
+- Active connections and locks
+- Buffer cache, disk I/O performance
 
 ![Grafana Dashboard PostgreSQL](./assets/grafana-dashboard-postgresql.png)
 
-Redis Overview (Memory usage, request rates, etc.)
+##### **Redis Overview**
+
+Tracks Redis instance metrics (via `redis_exporter`):
+
+- Memory usage
+- Cache hits/misses
+- Command rates
+- Keyspace statistics
 
 ![Grafana Dashboard Redis](./assets/grafana-dashboard-redis.png)
+
+#### JAEGER TRACING
+
+**Jaeger** is used to trace the lifecycle of each request across microservices. It helps in identifying latency issues, bottlenecks, and unexpected service behavior in distributed systems.
+
+**Access Jaeger UI**: Open **[http://localhost:16686](http://localhost:16686)**
+
+![Jaeger UI Search](./assets/jaeger-ui-search.png)
+![Jaeger UI Trace Detail](./assets/jaeger-ui-trace-detail.png)
 
 ### SETUP - KUBERNETES
 

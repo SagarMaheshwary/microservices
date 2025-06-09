@@ -13,13 +13,24 @@ services:
     ports:
       - 4000:4000
     depends_on:
-      - user-service
-      - authentication-service
-      - upload-service
-      - video-catalog-service
-    restart: always
+      user-service:
+        condition: service_healthy
+      authentication-service:
+        condition: service_healthy
+      upload-service:
+        condition: service_healthy
+      video-catalog-service:
+        condition: service_healthy
+    restart: on-failure
     volumes:
       - ./microservices-api-gateway:/app
+    labels:
+      log_target: "microservice"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   user-service:
     build:
@@ -30,11 +41,19 @@ services:
       - 5000:5000 # gRPC
       - 5010:5010 # HTTP (prometheus)
     depends_on:
-      - user-db
-    restart: always
+      user-db:
+        condition: service_healthy
+    restart: on-failure
     volumes:
       - ./microservices-user-service:/app
       - /app/node_modules
+    labels:
+      log_target: "microservice"
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=localhost:5000"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   authentication-service:
     build:
@@ -47,11 +66,20 @@ services:
       - 5001:5001 # gRPC
       - 5011:5011 # HTTP (prometheus)
     depends_on:
-      - user-service
-      - redis
-    restart: always
+      user-service:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: on-failure
     volumes:
       - ./microservices-authentication-service:/app
+    labels:
+      log_target: "microservice"
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=localhost:5001"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   upload-service:
     build:
@@ -64,10 +92,20 @@ services:
       - 5002:5002 # gRPC
       - 5012:5012 # HTTP (prometheus)
     depends_on:
-      - rabbitmq
-    restart: always
+      rabbitmq:
+        condition: service_healthy
+      encode-service:
+        condition: service_healthy
+    restart: on-failure
     volumes:
       - ./microservices-upload-service:/app
+    labels:
+      log_target: "microservice"
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=localhost:5002"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   encode-service:
     build:
@@ -80,10 +118,18 @@ services:
       - 5004:5004 # gRPC
       - 5014:5014 # HTTP (prometheus)
     depends_on:
-      - rabbitmq
-    restart: always
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
     volumes:
       - ./microservices-encode-service:/app
+    labels:
+      log_target: "microservice"
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=localhost:5004"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   video-catalog-service:
     build:
@@ -96,11 +142,22 @@ services:
       - 5003:5003 # gRPC
       - 5013:5013 # HTTP (prometheus)
     depends_on:
-      - rabbitmq
-      - video-catalog-db
-    restart: always
+      rabbitmq:
+        condition: service_healthy
+      video-catalog-db:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+    restart: on-failure
     volumes:
       - ./microservices-video-catalog-service:/app
+    labels:
+      log_target: "microservice"
+    healthcheck:
+      test: ["CMD", "grpc-health-probe", "-addr=localhost:5003"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   # DATABASES
   user-db:
@@ -114,6 +171,12 @@ services:
     volumes:
       - ./docker/user-db/data:/var/lib/postgresql/data
       - ./docker/user-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U postgres -d microservices_user_service"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   video-catalog-db:
     image: postgres:14
@@ -126,6 +189,15 @@ services:
     volumes:
       - ./docker/video-catalog-db/data:/var/lib/postgresql/data
       - ./docker/video-catalog-db/config/postgresql.conf:/etc/postgresql/postgresql.conf
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U postgres -d microservices_video_catalog_service",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   pgadmin:
     image: dpage/pgadmin4:8.13.0
@@ -148,6 +220,11 @@ services:
     volumes:
       - ./docker/redis/data:/data
       - ./docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   # MESSAGE BROKERS
   rabbitmq:
@@ -162,8 +239,13 @@ services:
     volumes:
       - ./docker/rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./docker/rabbitmq/data:/var/lib/rabbitmq/mnesia
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
-  # MONITORING
+  # MONITORING, LOGGING, TRACING
   grafana:
     image: grafana/grafana-enterprise:11.3.0
     container_name: grafana
@@ -173,28 +255,48 @@ services:
       - ./docker/grafana/data:/var/lib/grafana
       - ./docker/grafana/provisioning:/etc/grafana/provisioning
     attach: false
+    depends_on:
+      - loki
+      - prometheus
 
   prometheus:
     image: prom/prometheus:v2.55.0
     container_name: prometheus
-    # ports:
-    #   - 9090:9090
+    ports:
+      - 9090:9090
     volumes:
       - ./docker/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./docker/prometheus/data:/prometheus
     attach: false
 
   loki:
-    image: grafana/loki:2.7.0
+    image: grafana/loki:2.9.7
     container_name: loki
     # ports:
     #   - 3100:3100
     volumes:
       - ./docker/loki/data:/loki
+      # - ./docker/loki/config/config.yaml:/etc/loki/config.yaml
+    # command: -config.file=/etc/loki/config.yaml
+    attach: false
+
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker/alloy/config/config.alloy:/etc/alloy/config.alloy
+      - ./docker/alloy/data:/var/lib/alloy/data
+    ports:
+      - 3001:12345
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+    depends_on:
+      - loki
     attach: false
 
   jaeger:
     image: jaegertracing/all-in-one:1.56
+    container_name: jaegar
     ports:
       - "16686:16686" # UI
       # - "4318:4318" # OTLP HTTP
@@ -211,7 +313,8 @@ services:
       - RABBIT_USER=default
       - RABBIT_PASSWORD=default
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     attach: false
 
   redis-exporter:
@@ -222,7 +325,8 @@ services:
     environment:
       - REDIS_ADDR=redis://redis:6379
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     attach: false
 
   user-db-exporter:
@@ -235,7 +339,8 @@ services:
       - DATA_SOURCE_USER=postgres
       - DATA_SOURCE_PASS=password
     depends_on:
-      - user-db
+      user-db:
+        condition: service_healthy
     attach: false
 
   video-catalog-db-exporter:
@@ -248,5 +353,6 @@ services:
       - DATA_SOURCE_USER=postgres
       - DATA_SOURCE_PASS=password
     depends_on:
-      - video-catalog-db
+      video-catalog-db:
+        condition: service_healthy
     attach: false

@@ -1,0 +1,43 @@
+// ###############################
+// #### Logging Configuration ####
+// ###############################
+
+// Discover Docker containers and extract metadata.
+discovery.docker "linux" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// Define relabeling rules:
+// - Set `service_name` from container name.
+// - Only include containers with label `log_target=microservice`.
+discovery.relabel "logs_integrations_docker" {
+  targets = discovery.docker.linux.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "service_name"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_log_target"]
+    regex         = "microservice"
+    action        = "keep"
+  }
+}
+
+// Collect logs from Docker containers.
+loki.source.docker "default" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.relabel.logs_integrations_docker.output
+  labels        = { "platform" = "docker" }
+  relabel_rules = discovery.relabel.logs_integrations_docker.rules
+  forward_to    = [loki.write.local.receiver]
+}
+
+// Push logs to Loki.
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

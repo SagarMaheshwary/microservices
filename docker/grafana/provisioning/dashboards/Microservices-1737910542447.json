@@ -75,9 +75,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -146,9 +144,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -217,9 +213,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -288,9 +282,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -359,9 +351,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -430,9 +420,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -501,9 +489,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -572,9 +558,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -643,9 +627,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -714,9 +696,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -981,9 +961,7 @@
             },
             "pieType": "pie",
             "reduceOptions": {
-              "calcs": [
-                "count"
-              ],
+              "calcs": ["count"],
               "fields": "",
               "values": false
             },
@@ -997,7 +975,7 @@
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "sum by(status) (rate(api_gateway_requests_total{status!=\"200\"}[24h]))",
+              "expr": "sum by (status) (rate(api_gateway_requests_total{status!=\"200\"}[1m]))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "__auto",
@@ -1006,8 +984,8 @@
               "useBackend": false
             }
           ],
-          "title": "Error Rate",
-          "type": "piechart"
+          "title": "Requests Error Rate",
+          "type": "timeseries"
         },
         {
           "datasource": {
@@ -1346,9 +1324,7 @@
             },
             "pieType": "pie",
             "reduceOptions": {
-              "calcs": [
-                "count"
-              ],
+              "calcs": ["count"],
               "fields": "",
               "values": false
             },
@@ -1362,7 +1338,7 @@
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "sum by(status) (rate(user_service_grpc_requests_total{status!=\"OK\"}[24h]))",
+              "expr": "sum by(status) (rate(user_service_grpc_requests_total{status!=\"OK\"}[1m]))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "__auto",
@@ -1371,8 +1347,8 @@
               "useBackend": false
             }
           ],
-          "title": "Error Rate",
-          "type": "piechart"
+          "title": "Requests Error Rate",
+          "type": "timeseries"
         },
         {
           "datasource": {
@@ -1523,9 +1499,7 @@
             },
             "pieType": "pie",
             "reduceOptions": {
-              "calcs": [
-                "count"
-              ],
+              "calcs": ["count"],
               "fields": "",
               "values": false
             },
@@ -1539,7 +1513,7 @@
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "sum by(status) (rate(authentication_service_grpc_requests_total{status!=\"OK\"}[24h]))",
+              "expr": "sum by(status) (rate(authentication_service_grpc_requests_total{status!=\"OK\"}[1m]))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "__auto",
@@ -1548,8 +1522,8 @@
               "useBackend": false
             }
           ],
-          "title": "Error Rate",
-          "type": "piechart"
+          "title": "Requests Error Rate",
+          "type": "timeseries"
         },
         {
           "datasource": {
@@ -2076,9 +2050,7 @@
             },
             "pieType": "pie",
             "reduceOptions": {
-              "calcs": [
-                "count"
-              ],
+              "calcs": ["count"],
               "fields": "",
               "values": false
             },
@@ -2092,7 +2064,7 @@
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "sum by(status) (rate(upload_service_grpc_requests_total{status!=\"OK\"}[24h]))",
+              "expr": "sum by(status) (rate(upload_service_grpc_requests_total{status!=\"OK\"}[1m]))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "__auto",
@@ -2101,8 +2073,8 @@
               "useBackend": false
             }
           ],
-          "title": "Error Rate",
-          "type": "piechart"
+          "title": "Requests Error Rate",
+          "type": "timeseries"
         },
         {
           "datasource": {
@@ -2302,7 +2274,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(encode_service_message_processing_duration_seconds[1m])) by (message_type))",
+          "expr": "histogram_quantile(0.95, sum(rate(encode_service_message_processing_duration_seconds_bucket[1m])) by (le, message_type))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2446,9 +2418,7 @@
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "count"
-          ],
+          "calcs": ["count"],
           "fields": "",
           "values": false
         },
@@ -2462,7 +2432,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(reason) (rate(encode_service_message_processing_errors_total{}[5m]))",
+          "expr": "sum by(reason) (rate(encode_service_message_processing_errors_total{}[1m]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
@@ -2471,8 +2441,8 @@
           "useBackend": false
         }
       ],
-      "title": "Error Rate",
-      "type": "piechart"
+      "title": "RabbitMQ Messages Error Rate",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -2813,9 +2783,7 @@
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "count"
-          ],
+          "calcs": ["count"],
           "fields": "",
           "values": false
         },
@@ -2829,7 +2797,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(status) (rate(video_catalog_service_grpc_requests_total{status!=\"OK\"}[24h]))",
+          "expr": "sum by(status) (rate(video_catalog_service_grpc_requests_total{status!=\"OK\"}[1m]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
@@ -2838,8 +2806,8 @@
           "useBackend": false
         }
       ],
-      "title": "GRPC Error Rate",
-      "type": "piechart"
+      "title": "gRPC Error Rate",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -3169,9 +3137,7 @@
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "count"
-          ],
+          "calcs": ["count"],
           "fields": "",
           "values": false
         },
@@ -3185,7 +3151,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(reason) (rate(video_catalog_service_message_processing_errors_total{}[5m]))",
+          "expr": "sum by(reason) (rate(video_catalog_service_message_processing_errors_total{}[1m]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
@@ -3195,7 +3161,7 @@
         }
       ],
       "title": "RabbitMQ Messages Error Rate",
-      "type": "piechart"
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -3280,7 +3246,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(video_catalog_service_message_processing_duration_seconds[1m])) by (message_type))",
+          "expr": "histogram_quantile(0.95, sum(rate(video_catalog_service_message_processing_duration_seconds_bucket[1m])) by (le, message_type))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -3297,7 +3263,7 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},

@@ -32,4 +32,7 @@ docker/prometheus/data/*
 docker/loki/data/*
 !docker/loki/data/.gitkeep
 
+docker/alloy/data/*
+!docker/alloy/data/.gitkeep
+
 kubernetes/microservices/*/Secret.dev.yaml
