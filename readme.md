@@ -169,8 +169,6 @@ Login Credentials:
 - **Default username:** `admin`
 - **Default password:** `admin` (you can set a new password on first login)
 
-This project includes comprehensive observability using **Prometheus** for metrics, **Loki** for centralized logging, and **Grafana** to visualize and explore both. Monitoring allows you to track real-time system behavior and identify bottlenecks, failures, or unusual patterns.
-
 #### Available Dashboards
 
 ##### **Microservices Overview**
@@ -212,8 +210,6 @@ Tracks Redis instance metrics (via `redis_exporter`):
 ![Grafana Dashboard Redis](./assets/grafana-dashboard-redis.png)
 
 #### JAEGER TRACING
-
-**Jaeger** is used to trace the lifecycle of each request across microservices. It helps in identifying latency issues, bottlenecks, and unexpected service behavior in distributed systems.
 
 **Access Jaeger UI**: Open **[http://localhost:16686](http://localhost:16686)**
 
