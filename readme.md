@@ -21,70 +21,75 @@ A Streaming platform based on Microservices architecture.
 - **Databases:** PostgreSQL, Redis
 - **Message Broker:** RabbitMQ
 - **Cloud:** AWS S3, CloudFront
-- **Monitoring & Logging:** Grafana, Prometheus, Loki
+- **Monitoring & Observability:** Grafana, Prometheus, Loki, Jaeger
 
 ### **MICROSERVICES OVERVIEW**
 
-1. **API Gateway:**
+#### **API Gateway:**
 
-   - Acts as the main entry point for external requests.
-   - Uses REST API to communicate with clients.
-   - Routes internal service-to-service communication via gRPC.
+- Acts as the main entry point for external requests.
+- Uses REST API to communicate with clients.
+- Routes internal service-to-service communication via gRPC.
 
-2. **User Service:**
+#### **User Service:**
 
-   - Manages user-related operations (e.g., profile management, settings).
-   - Stores user data in PostgreSQL.
-   - Uses gRPC for request/response communication.
+- Manages user-related operations (e.g., profile management, settings).
+- Stores user data in PostgreSQL.
+- Uses gRPC for request/response communication.
 
-3. **Authentication Service:**
+#### **Authentication Service:**
 
-   - Handles user registration, login, and authentication.
-   - Uses JWT for authentication.
-   - Maintains a JWT token blacklist in Redis.
-   - Communicates with the User Service for user validation.
+- Handles user registration, login, and authentication.
+- Uses JWT for authentication.
+- Maintains a JWT token blacklist in Redis.
+- Communicates with the User Service for user validation.
 
-4. **Upload Service:**
+#### **Upload Service:**
 
-   - Accepts raw video uploads from users.
-   - Stores raw videos in an S3 bucket.
-   - Sends metadata and processing instructions via RabbitMQ to the Encode Service.
+- Generates pre-signed S3 URLs that allow users to upload videos directly from the frontend, avoiding backend bandwidth usage.
+- Handles upload initialization by validating metadata and upload intent.
+- After a successful upload, it sends video metadata and processing instructions to the Encode Service via RabbitMQ.
 
-5. **Encode Service:**
+#### **Encode Service:**
 
-   - Listens for RabbitMQ messages from the Upload Service.
-   - Processes video files into MPEG-DASH chunks.
-   - Generates DASH manifest files.
-   - Uploads processed video chunks and manifest files to S3.
-   - Sends metadata and video details to the Video Catalog Service via RabbitMQ.
+- Listens for RabbitMQ messages from the Upload Service.
+- Processes video files into MPEG-DASH chunks.
+- Generates DASH manifest files.
+- Uploads processed video chunks and manifest files to S3.
+- Sends metadata and video details to the Video Catalog Service via RabbitMQ.
 
-6. **Video Catalog Service:**
+#### **Video Catalog Service:**
 
-   - Receives metadata from the Encode Service after video processing.
-   - Stores video metadata (e.g., resolutions, duration, S3 paths) in PostgreSQL.
-   - Implements gRPC RPCs for:
-     - Listing available videos.
-     - Fetching details of a single video.
-     - Generating CloudFront CDN URLs for streaming.
+- Receives metadata from the Encode Service after video processing.
+- Stores video metadata (e.g., resolutions, duration, S3 paths) in PostgreSQL.
+- Implements gRPC RPCs for:
+  - Listing available videos.
+  - Fetching details of a single video.
+  - Generating CloudFront CDN URLs for streaming.
 
-### **STORAGE AND STREAMING**
+#### **Storage and Streaming**
 
 - **S3 + CloudFront:**
   - Raw and processed video content is stored in an S3 bucket.
   - CloudFront CDN is used to distribute video chunks efficiently.
   - Signed URLs are generated for secure streaming access.
 
-### **MONITORING AND LOGGING**
+#### Monitoring, Logging, and Tracing
 
-- **Metrics & Observability:**
+- **Metrics & Observability**
 
-  - Prometheus collects default and custom metrics from all microservices, PostgreSQL databases, Redis, and RabbitMQ.
-  - Metrics are visualized in Grafana dashboards.
+  - Prometheus collects default and custom metrics from Microservices, PostgreSQL, Redis, and RabbitMQ.
+  - Metrics are visualized through Grafana dashboards, showing insights like request rates, error rates, latency, and system health.
 
-- **Logging:**
+- **Logging**
 
-  - Loki is used for centralized logging.
-  - Logs from microservices are exported to Loki and analyzed in Grafana.
+  - Loki collects structured logs from each Microservice.
+  - Logs are forwarded using Grafana Alloy, and visualized in Grafana for easier filtering, searching, and debugging.
+
+- **Tracing**
+  - OpenTelemetry is integrated into all services to instrument request flows.
+  - Jaeger provides a visual trace explorer to follow request chains across HTTP, gRPC, and RabbitMQ boundaries.
+  - Helps identify performance bottlenecks and root causes during failures or latency spikes.
 
 ---
 
