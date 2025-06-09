@@ -8,8 +8,6 @@ A Streaming platform based on Microservices architecture.
 
 - [Technologies](#technologies)
 - [Microservices Overview](#microservices-overview)
-- [Storage and Streaming](#storage-and-streaming)
-- [Monitoring and Logging](#monitoring-and-logging)
 - [Setup - Docker Compose](#setup---docker-compose)
 - [Setup - Kubernetes](#setup---kubernetes)
 - [APIs](#apis)
