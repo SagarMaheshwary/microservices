@@ -11,7 +11,6 @@ A Streaming platform based on Microservices architecture.
 - [Storage and Streaming](#storage-and-streaming)
 - [Monitoring and Logging](#monitoring-and-logging)
 - [Setup - Docker Compose](#setup---docker-compose)
-- [Grafana Dashboards](#grafana-dashboards)
 - [Setup - Kubernetes](#setup---kubernetes)
 - [APIs](#apis)
 
